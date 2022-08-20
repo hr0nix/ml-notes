@@ -1,5 +1,5 @@
 As you probably know, uncertainty about a value can be decomposed into aleatoric and epistemic uncertainty, where
-* Aleatoric uncertainty corresponds to the irreducible stochasticity in the value, such as the dependecy on results of a coin toss.
+* Aleatoric uncertainty corresponds to the irreducible stochasticity in the value, such as its dependecy on results of a coin toss.
 * Epistemic uncertainty represents the uncertainty that can be reduced to zero if we have infinite data about our problem.
 
 But what does it mean in terms of math? Turns out this decomposition can be derived by analyzing the entropy of the predictive posterior.
@@ -32,5 +32,5 @@ This is *aleatoric* uncertainty.
 
 $$I[x, \theta \mid X=X] = H[\theta \mid X=X] - H[\theta \mid x, X=X],$$
 where we decomposed mutual information into a difference of entropies. Note that this term is zero only when adding $x$ to $X$ does not provide any new information about $\theta$,
-meaning that we've learned all we could from $X$. This is *epistemic* uncertainty.
+meaning that if we've learned all we could from $X$, it vanishes. This is *epistemic* uncertainty.
 
