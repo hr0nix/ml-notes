@@ -31,6 +31,6 @@ so here, given a model $\theta$ we compute the uncertainty about the value of $x
 This is *aleatoric* uncertainty.
 
 $$I[x, \theta \mid X=X] = H[\theta \mid X=X] - H[\theta \mid x, X=X],$$
-where we decomposed mutual information into a difference of entropies. Note that this term is zero when adding $x$ to $X$ does not provide any new information about $\theta$,
+where we decomposed mutual information into a difference of entropies. Note that this term is zero only when adding $x$ to $X$ does not provide any new information about $\theta$,
 meaning that we've learned all we could from $X$. This is *epistemic* uncertainty.
 
