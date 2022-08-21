@@ -1,3 +1,5 @@
+# Decomposition of uncertainty into aleatoric and epistemic terms
+
 As you probably know, uncertainty about a value can be decomposed into aleatoric and epistemic uncertainty, where
 * Aleatoric uncertainty corresponds to the irreducible stochasticity in the value, such as its dependecy on results of a coin toss.
 * Epistemic uncertainty represents the uncertainty that can be reduced to zero if we have infinite data about our problem.
