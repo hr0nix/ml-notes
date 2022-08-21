@@ -2,7 +2,7 @@
 
 ## The problem
 What loss function is your first choice when you need to solve a regression problem? I guess it's L2. That's what we are taught in intro ML courses.
-However, as I've discovered during my ML engineer career, a lot of engineers in this area don't fully appreciate the implicit assumptions they make
+However, as I've discovered during my ML engineer career, a lot of ML practicioners don't fully appreciate the implicit assumptions they make
 when they use L2,
 which sometimes leads to gross misinterpretation of the modelling results. I'm guilty of that myself. So in this note I'll try to summarize what one should be aware of when using L2 or any other unimodal regression loss.
 
@@ -51,5 +51,23 @@ But those are a bit more exotic, and I hope I've already convinced you enough th
 
 ## The solution
 
+One way to work around the problem is to think about regression through the prism of probabilistic modelling framework. In this framework, we don't aim to minimize a loss function, but rather try to maximize the expected log-likelihood of the training data over some parametric distribution family. Turns out, if you try to fit a normal distribution with a feature-dependent mean and a constant variance to your data, this is equivalent to minimizing L2 loss:
+$$\theta^* = \arg \max_{\theta} \frac{1}{D} \sum_{(x, y) \in D} \log N(y \mid f(x), \sigma^2) =$$
+$$= \arg \max_{\theta} \frac{1}{D} \sum_{(x, y) \in D} \left[-\log [\sqrt{2 \pi} \sigma] - \frac{1}{2\sigma^2} (y - f(x))^2 \right] =$$
+$$= \arg \min_{\theta} \frac{1}{D} \sum_{(x, y) \in D} \frac{1}{2} (y - f(x))^2,$$
+where we dropped additive constants and constant scaling factors, which don't affect the location of the optimum. This view provides another justification for why L2 might not be a good choice:
+why would you fit a Gaussian to something that doesn't look like a Gaussian and expect good results?
+
+Thing is, in this framework we have freedom to choose the distribution we are fitting to the data and a recipe for optimization: write down the expected log-likelihood and do a gradient ascent with respect to distribution parameters, this is straightforward to implement in any modern deep learning library. As for the distribution choice,
+* Is the posterior unimodal and sharp? Probably stay with Gaussian.
+* Is the posterior unimodal but more heavy-tailed? [Laplace](https://en.wikipedia.org/wiki/Laplace_distribution) might be a better choice[^3].
+* Is the support of the posterior bounded? Maybe you need a [Beta](https://en.wikipedia.org/wiki/Beta_distribution).
+* Is the support bounded from one side? Consider [Gamma](https://en.wikipedia.org/wiki/Gamma_distribution).
+* Are you predicting an angle? [Von-Mises](https://en.wikipedia.org/wiki/Von_Mises_distribution) is probably a good choice.
+* Is the posterior multimodal? Use a reasonably sized [mixture of distributions](https://en.wikipedia.org/wiki/Mixture_distribution) from the appropriate family.
+
+This, however, mostly applies to scalar outcomes. If you are trying to model a complex object such as an image, it's likely that no simple parametric distribution family will fit the posterior well. In order to model complex objects you need more expressive families such as [autoregressive models](https://deepgenerativemodels.github.io/notes/autoregressive/), [variational autoencoders](https://deepgenerativemodels.github.io/notes/vae/) or [diffusion models](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/), but that is out of scope of this note. It should be mentioned, however, that even these advanced methods use the general framework described above: decide on what distribution family you are fitting to the posterior, parametrize it and maximize the log-likelihood of the data (or maybe its approximation or a lower bound if the likelihood is hard to compute exactly).
+
 [^1]: Hidden information and stochasticity are actually the same thing: if you have access to the state of the random generator, everything becomes deterministic.
 [^2]: This is a simplified example of an actual modelling problem that is of interest in self-driving industry.
+[^3]: This would correspond to minimizing L1 loss in the classical regression setup.
