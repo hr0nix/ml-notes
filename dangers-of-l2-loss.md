@@ -32,12 +32,18 @@ This can even be unintentional: one might implicitly assume that correct predict
 which are not expectations but samples.
 And the problem is that, depending on the nature of your data, the expectation can be arbitrarily dissimilar to any sample. Let's consider a few examples.
 
+![A symmetrical unimodal posterior](/images/dangers-of-l2-loss/posterior_unimodal_symmetric.png)
+
 First, the desired scenario where the L2 regression strives: the posterior is (approximately) symmetrical and unimodal. This, for instance, should happen according to Central Limit theorem if $y$ is comprised of many independent factors that contribute into it additively.
 In this case the expectation of the posterior is representative of the most likely outcome.
+
+![A skewed unimodal posterior](/images/dangers-of-l2-loss/posterior_unimodal_skewed.png)
 
 Another possible case is a unimodal posterior with uneven tails. This can happen, for example, if the value you're trying to model has some natural bound on one side.
 For instance, you might be predicting waiting time, which cannot be negative but can be very large.
 For such problems the expectation of the posterior will correspond to some value that is not entirely unlikely, but can be rather far from the area where most of the outcomes happen.
+
+![A multimodal posterior](/images/dangers-of-l2-loss/posterior_multimodal.png)
 
 And, finally, we have multimodal distributions. These can arise when the value you are trying to predict depends on some discrete stochastic factor.
 For example, if you are trying to predict how far a vehicle on the road will travel in 5 sec given its current state, the distance distribution will be multimodal when the vehicle is approaching a yellow traffic light:
