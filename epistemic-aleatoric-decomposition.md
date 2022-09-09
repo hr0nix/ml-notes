@@ -21,18 +21,36 @@ To decompose this uncertainty we will use two properties of entropy:
 Both properties can be easily derived from the definition of entropy.
 
 Applying the first property to the joint posterior, we get
-$$H[x, \theta \mid X=X] = H[x \mid X=X] + H[\theta \mid X=X] - I[x, \theta \mid X=X].$$
+
+$$
+H[x, \theta \mid X=X] = H[x \mid X=X] + H[\theta \mid X=X] - I[x, \theta \mid X=X].
+$$
+
 We can rearrange the terms to express the entropy of the predictive posterior:
-$$H[x \mid X=X] = H[x, \theta \mid X=X] - H[\theta \mid X=X] + I[x, \theta \mid X=X],$$
+
+$$
+H[x \mid X=X] = H[x, \theta \mid X=X] - H[\theta \mid X=X] + I[x, \theta \mid X=X],
+$$
+
 which, using the second property, can be transformed into
+
 $$H[x \mid X=X] = H[x \mid \theta, X=X] + I[x, \theta \mid X=X].$$
 
 Let's analyze the terms we've got here. Using the definition of conditional entropy, the first term can be expressed as
-$$H[x \mid \theta, X=X] = \int_{\theta} H[x \mid \theta=\theta, X=X] P(\theta \mid X) d\theta.$$
+
+$$
+H[x \mid \theta, X=X] = \int_{\theta} H[x \mid \theta=\theta, X=X] P(\theta \mid X) d\theta.
+$$
+
 So here, given a model $\theta$ we compute the uncertainty about the value of $x$ from the point of view of that model, and average this uncertainty over all models, taking into account how likely they are given the data.
 This is *aleatoric* uncertainty.
 
-As for the second term, $$I[x, \theta \mid X=X] = H[\theta \mid X=X] - H[\theta \mid x, X=X],$$
+As for the second term,
+
+$$
+I[x, \theta \mid X=X] = H[\theta \mid X=X] - H[\theta \mid x, X=X],
+$$
+
 where we decomposed mutual information into a difference of entropies. Note that this term is zero only when adding $x$ to $X$ does not provide any new information about $\theta$,
 meaning that if we've learned all we could from $X$, it vanishes. This is *epistemic* uncertainty.
 
