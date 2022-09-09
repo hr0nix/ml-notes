@@ -7,10 +7,12 @@ when they use L2,
 which sometimes leads to gross misinterpretation of the modelling results. I'm guilty of that myself. So in this note I'll try to summarize what one should be aware of when using L2 or any other unimodal regression loss.
 
 Let's first remind ourselves what's the L2 loss. It's the following function:
-$$L_2(y_{true}, y_{pred}) = (y_{true} - y_{pred})^2.$$
+
+$$`L_2(y_{true}, y_{pred}) = (y_{true} - y_{pred})^2.`$$
 
 When solving regression problems, the standard approach is to minimize the MC estimate of the expectation of this loss over the data distribution:
-$$\theta^\* = \arg \min_{\theta} \frac{1}{\|D\|} \sum_{(x, y) \in D} \left[f(x; \theta) - y\right]^2.$$
+
+$$`\theta^* = \arg \min_{\theta} \frac{1}{|D|} \sum_{(x, y) \in D} \left[f(x; \theta) - y\right]^2.`$$
 
 You can then plug $\theta^{\*}$ into $f$ to predict $y_{pred} = f(x; \theta^\*)$ for any given $x$.
 This gives us a deterministic rule that connects $x$ and $y.$ But in practice it's often impossible to predict $y$ from $x$ precisely.
@@ -21,9 +23,12 @@ So what is this deterministic $y_{pred}$ that we get by solving the regression p
 Turns out, the answer is quite simple: if you assume infinite training data and model capacity,
 minimization of L2 loss leads to predicting the mean of the posterior $\mathbb{E}\_{y \sim P(y \mid x)}[y]$.
 This can be easily shown:
-$$\mathbb{E}\_{y \sim P(y \mid x)} (y_{pred} - y)^2 \to \min$$
-$$\frac{d}{dy_{pred}} \mathbb{E}\_{y \sim P(y \mid x)} (y_{pred} - y)^2 = \mathbb{E}\_{y \sim P(y \mid x)}\left[2(y_{pred} - y)\right] = 0$$
-$$y_{pred} = \mathbb{E}\_{y \sim P(y \mid x)}[y]$$
+
+$$`\mathbb{E}_{y \sim P(y \mid x)} (y_{pred} - y)^2 \to \min`$$
+
+$$`\frac{d}{dy_{pred}} \mathbb{E}_{y \sim P(y \mid x)} (y_{pred} - y)^2 = \mathbb{E}_{y \sim P(y \mid x)}\left[2(y_{pred} - y)\right] = 0`$$
+
+$$`y_{pred} = \mathbb{E}_{y \sim P(y \mid x)}[y]`$$
 
 This fact becomes important when it's time to make use of $y_{pred}$: interpret its value or plug it into some other function.
 If you're fully aware that $y_{pred}$ is an expectation, you should be fine.
@@ -58,9 +63,13 @@ But those are a bit more exotic, and I hope I've already convinced you enough th
 ## The solution
 
 One way to work around the problem is to think about regression through the prism of probabilistic modelling framework. In this framework, we don't aim to minimize a loss function, but rather try to maximize the expected log-likelihood of the training data over some parametric distribution family. Turns out, if you try to fit a normal distribution with a feature-dependent mean and a constant variance to your data, this is equivalent to minimizing the L2 loss:
-$$\theta^* = \arg \max_{\theta} \frac{1}{\|D\|} \sum_{(x, y) \in D} \log N(y \mid f(x), \sigma^2) =$$
-$$= \arg \max_{\theta} \frac{1}{\|D\|} \sum_{(x, y) \in D} \left[-\log [\sqrt{2 \pi} \sigma] - \frac{1}{2\sigma^2} (y - f(x))^2 \right] =$$
-$$= \arg \min_{\theta} \frac{1}{\|D\|} \sum_{(x, y) \in D} \left[y - f(x)\right]^2,$$
+
+$$`\theta^* = \arg \max_{\theta} \frac{1}{|D|} \sum_{(x, y) \in D} \log \mathcal{N}(y \mid f(x), \sigma^2) =`$$
+
+$$`= \arg \max_{\theta} \frac{1}{|D|} \sum_{(x, y) \in D} \left[-\log [\sqrt{2 \pi} \sigma] - \frac{1}{2\sigma^2} (y - f(x))^2 \right] =`$$
+
+$$`= \arg \min_{\theta} \frac{1}{|D|} \sum_{(x, y) \in D} \left[y - f(x)\right]^2,`$$
+
 where we dropped additive constants and constant scaling factors, which don't affect the location of the optimum. This view provides another justification for why L2 might not be a good choice:
 why would you fit a Gaussian to something that doesn't look like a Gaussian and expect good results?
 
