@@ -91,10 +91,10 @@ Substituting these into the expression for $\hat{\theta}$ we can see that the de
 $$`\hat{\theta} = \arg \max_{\theta} \mathbb{E}_{(x, y) \sim P_{do(\psi(x))}(x, y)} \log P(y \mid x, \theta).`$$
 
 An important difference with $\theta^\*$ is what the expectation is taken over: ideally we want to optimize the expectation over $P_{do(\psi(x))}(x, y)$,
-but in practice we are optimizing over $P(x, y)$. In the limit of infinite data and model capacity it should not matter: we will still be able to learn
+but in practice we are optimizing it over $P(x, y)$. In the limit of infinite data and model capacity it should not matter: we will still be able to learn
 $P(y \mid x, \theta)$ for every $x$. But in practice we might not have such luxury.
 For instance, what can happen is that $P(x, y)$ frequently produces some $x$ which is rare under $\psi(x)$, and $\theta^\*$ will spend a large amount of its finite capacity
-on such $x$ (maybe even memorize it!) at the expense of inputs we intent to apply the model on.
+on such $x$ (maybe even memorize the answer for it!) at the expense of inputs we intent to apply the model on.
 
 Luckily in this case there's a way to optimize the expectation of interest
 using [importance sampling](https://en.wikipedia.org/wiki/Importance_sampling)[^2]:
@@ -125,7 +125,7 @@ The corresponding marginal joint will be
 $$`P_{do(\psi(x))}(x, y) = \int_{\theta, z_x, z_y} P_{do(\psi(x))}(x, y, \theta, z_x, x_y) d\theta dz_x dz_y = \psi(x) P(y \mid x),`$$
 
 just as in case 2. The conditional $P_{do(\psi(x))}(y \mid x, \theta)$ will also be the same as in case 2.
-So the presence of hidden variables which are not confounders is irrelevant for the problem formulation.
+So the presence of hidden variables which are not confounders is irrelevant for our analysis.
 
 ### Case 4: a hidden confounder
 
@@ -151,26 +151,26 @@ So when there exists a hidden confounder $z$, we are not even optimizing the exp
 
 But why are the two conditionals different? This is a consequence of the fact that there is a dependency between $x$ and $z$ in the joint before intervention, so the value of $x$ is informative about the likely values of $z$ there, changing in turn our beliefs about $y$. However, if we choose $x$ ourselves, its value does not carry information about $z$ and should not affect our beliefs about $y$. Note that the expressions become equal if $z$ is independent of $x$.
 
-Here is a simple example of how this can arise in practice:
+Here is an illustrative example of how this can arise:
 * Suppose we want to learn an image classifier that can distinguish between images of cats and dogs.
 * Our training data comes from two photographers, Alice and Bob. Alice mostly takes pictures of dogs while Bob prefers cats.
 * There are two camera manufacturers, A and B. Camera made by each manufacturer takes images with a unique set of artifacts that can be noticed by a neural network. Alice mostly uses camera A, Bob prefers camera B.
 * We didn't put the photograpers's identity in the dataset, so it's a hidden confounder.
-* When we train a neural net on our dataset, it learns that if an image comes from camera A, it is more likely to contain a dog.
+* When we train a neural net on our dataset, it learns that if an image comes from camera A, it's probably taken by Alice, which means it's more likely to contain a dog.
 * This is a perfectly valid conclusion for our data, but it doesn't hold if someone else uses camera A to take an image.
 * Note that even if we ask Alice and Bob to take infinite amount of photos and train on them all, the problem does not go away. When in doubt, the model always associates photo taken by camera A with a higher probability of seeing a dog, because that's how we trained it to behave.
 
 ## Mitigating the hidden confounder problem
 
-To reduce the discrepancy between what we are optimizing and what we should be optimizing, we need to make $P(y \mid x, \theta)$ and $P_{do(\psi(x))}(y \mid x, \theta)$ as similar as possible. There are at least two options for achieving that, both on the data collection side.
+To reduce the discrepancy between what we are optimizing and what we should be optimizing, we need to make $P(y \mid x, \theta)$ and $P_{do(\psi(x))}(y \mid x, \theta)$ as similar as possible. I can think of several options for achieving that, all on the data collection side.
 
-First, we can make the confounder observed, effectively casting our problem to either case 1 or case 2 discussed above. However it might not always be physically possible to obtain the value of $z$. And even if we can do, it might not be clear how to proceed. For instance, in the example above, we can add photographer identity to the features, but what are we going to put there during inference, when someone else takes the photo?
+First, we can make the confounder observed, effectively casting our problem to the case 2 discussed above. It might not always be physically possible to obtain the value of $z$, but sometimes it is. In the example discussed above, we could have added photographer identity to features. Interestingly, in this problem setup we are implicitly assuming that everyone is either Alice or Bob, and the best thing we can do during inference is to integrate over both options.
 
 Another option is to make $x$ as uninformative about $z$ as possible, essentially removing the confounding. For instance, we might want to ask Alice and Bob to use both cameras 50% of the time, this way image artefacts will no longer be informative about photographer's identity. Generally, comparing the conditionals with confounder before and after intervention tells us that the less informative $x$ is about $z$, the closer the two conditionals are, so we don't have to remove the confounding completely to see the performance benefits.
 
 ## Futher reading
 
-For an interesting example of how the problem of having a hidden confounder can hurt generative models and behavior cloning, I recommend reading "Shaking the foundations: delusions in sequence models for interaction and control" by Ortega et. al [link](https://arxiv.org/abs/2110.10819). It also contains a more detailed introduction into causality.
+For an interesting example of how the problem of having a hidden confounder can hurt generative models and behavior cloning, I recommend reading [Shaking the foundations: delusions in sequence models for interaction and control](https://arxiv.org/abs/2110.10819) by Ortega et. al. It also contains a more detailed introduction into causality.
 
 [^1]: This is often referred to as _out-of-distribution_ (OOD) setting in ML literature.
 [^2]: This technique is known as _propensity score matching_ in causality literature.
