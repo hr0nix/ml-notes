@@ -61,7 +61,7 @@ $$`\hat{\theta} = \arg \max_{\theta} \mathbb{E}_{(x, y) \sim P_{do(\psi(x))}(x, 
 
 but that's not what we were solving before to obtain $\theta^*$. What is the relation between the two solutions?
 
-### Case 1: marginal is the same
+### Case 1: input distribution does not change
 
 If our $x$ comes from $\psi(x)=P(x)$ as was the case in training data, then $P_{do(\psi(x))}(x, y)=P(x, y)$, $P_{do(\psi(x))}(y \mid x, \theta) = P(y \mid x, \theta)$
 and, therefore, $\theta^* = \hat{\theta}$, so we get exactly the model we want.
@@ -151,7 +151,7 @@ So when there exists a hidden confounder $z$, we are not even optimizing the exp
 
 But why are the two conditionals different? This is a consequence of the fact that there is a dependency between $x$ and $z$ in the joint before intervention, so the value of $x$ is informative about the likely values of $z$ there, changing in turn our beliefs about $y$. However, if we choose $x$ ourselves, its value does not carry information about $z$ and should not affect our beliefs about $y$. Note that the expressions become equal if $z$ is independent of $x$.
 
-Here is an illustrative example of how this can arise:
+Here is an illustrative example of how this effect can arise:
 * Suppose we want to learn an image classifier that can distinguish between images of cats and dogs.
 * Our training data comes from two photographers, Alice and Bob. Alice mostly takes pictures of dogs while Bob prefers cats.
 * There are two camera manufacturers, A and B. Camera made by each manufacturer takes images with a unique set of artifacts that can be noticed by a neural network. Alice mostly uses camera A, Bob prefers camera B.
@@ -164,9 +164,13 @@ Here is an illustrative example of how this can arise:
 
 To reduce the discrepancy between what we are optimizing and what we should be optimizing, we need to make $P(y \mid x, \theta)$ and $P_{do(\psi(x))}(y \mid x, \theta)$ as similar as possible. I can think of several options for achieving that, all on the data collection side.
 
-First, we can make the confounder observed, effectively casting our problem to the case 2 discussed above. It might not always be physically possible to obtain the value of $z$, but sometimes it is. In the example discussed above, we could have added photographer identity to features. Interestingly, in this problem setup we are implicitly assuming that everyone is either Alice or Bob, and the best thing we can do during inference is to integrate over both options.
+The most simple option but sometimes unavailable option is to avoid OOD setup at all, casting our problem to the case 1 from above. If your $x$ comes from the same distribution as the training data, presense of hidden confounders is irrelevant. One way to achieve that is to quickly deploy model of somewhat acceptable quality and start collecting and labelling data the model is being run on. This is not an option, however, in domains where labelling is expensive and data is scarce, like protein structure prediction.
+
+We can also make the confounder observed, effectively casting our problem to the case 2 discussed above. It might not always be physically possible to obtain the value of $z$, but sometimes it is. In the example discussed above, we could have added photographer identity to features. Interestingly, in this problem setup we are implicitly assuming that everyone is either Alice or Bob, and the best thing we can do during inference is to integrate over both options.
 
 Another option is to make $x$ as uninformative about $z$ as possible, essentially removing the confounding. For instance, we might want to ask Alice and Bob to use both cameras 50% of the time, this way image artefacts will no longer be informative about photographer's identity. Generally, comparing the conditionals with confounder before and after intervention tells us that the less informative $x$ is about $z$, the closer the two conditionals are, so we don't have to remove the confounding completely to see the performance benefits.
+
+These are the only solutions I know of, if there are any other, I'd love to hear about them.
 
 ## Futher reading
 
