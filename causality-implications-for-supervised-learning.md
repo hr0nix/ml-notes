@@ -9,7 +9,7 @@ given a new $x$, want to determine what is the corresponding $y$. For instance, 
 and try to learn a labelling function that can work on previously unseen images. A widely used approach is to describe the relationship between $x$ and $y$ in terms of $P(y \mid x, \theta^*)$, where $\theta^\*$ is a model found by maximizing the expected log-likelihood,
 where the expectation is taken over the joint:
 
-$$`\theta^* = \arg \max_{\theta} \mathbb{E}_{(x, y) \sim P(x, y)} \log P(y \mid x, \theta)`.$$
+$$`\theta^* = \arg \max_{\theta} \mathbb{E}_{(x, y) \sim P(x, y)} \log P(y \mid x, \theta).`$$
 
 Since $P(x, y)$ is unknown, in practice we estimate the expectation via Monte-Carlo using our train set $D$, which is a sample from $P(x, y)$:
 
