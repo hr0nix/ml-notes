@@ -174,9 +174,9 @@ These are the only solutions I know of, if there are any other, I'd love to hear
 
 One can wonder if our problems with hidden confounders come from the fact that we are using maximum likelihood estimates instead of evaluating predictive posterior, as a true Bayesian would. Unfortunately, they don't: the predictive posteriors are different when computed with and without the intervention on $x$, and we cannot evaluate the former:
 
-$$`P_{do(\psi(x))}(y \mid x) = \int_{z, \theta} P(\theta) P(z) P(y \mid x, z, \theta) dz d\theta.`$$
+$$`P_{do(\psi(x))}(y \mid x) = \int_{z, \theta} P(\theta) P(z) P(y \mid x, z, \theta) dz d\theta,`$$
 
-$$`P(y \mid x) = \int_{z, \theta} P(\theta) P(z \mid x) P(y \mid x, z, \theta) dz d\theta,`$$
+$$`P(y \mid x) = \int_{z, \theta} P(\theta) P(z \mid x) P(y \mid x, z, \theta) dz d\theta.`$$
 
 So, there is no way to distinguish between correlation and causation from observational data when hidden confounders are present, no matter how Bayesian we are.
 
