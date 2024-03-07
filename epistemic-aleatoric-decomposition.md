@@ -54,3 +54,11 @@ $$
 where we decomposed mutual information into a difference of entropies. Note that this term is zero only when adding $x$ to $X$ does not provide any new information about $\theta$,
 meaning that if we've learned all we could from $X$, it vanishes. This is *epistemic* uncertainty.
 
+One way to compute epistemic uncertainty if we have access to samples from $P(\theta \mid X)$ is to compute
+
+$$
+H[x \mid X=X] - H[x \mid \theta, X=X] = H[\int_{\theta} P(x \mid \theta) P(\theta \mid X) d\theta] - \int_{\theta} H[x \mid \theta=\theta, X=X] P(\theta \mid X) d\theta,
+$$
+
+i.e. to subtract the average prediction entropy of the model ensemble elements from the total prediction entropy of the whole ensemble. In practice it's usually not feasible to sample from the model posterior, so multiple models trained with different random seeds
+are used to approximate samples. If the model is stochastic (e.g. it uses dropout or epinets), another option is to use the same model with different inference random seeds.
