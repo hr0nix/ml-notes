@@ -1,8 +1,8 @@
 # The dangers of L2 (or any other unimodal regression) loss
 
 ## The problem
-What loss function is your first choice when you are faced with a regression problem? I guess it's L2. At least that's what we are taught in intro ML courses.
-However, as I've discovered over my ML engineer career, a lot of ML practicioners don't fully appreciate the implicit assumptions they make
+What loss function is your first choice when faced with a regression problem? I guess it's L2. At least that's what we are taught in intro ML courses.
+However, as I've discovered over my ML engineer career, a lot of ML practitioners don't fully appreciate the implicit assumptions they make
 when they use L2,
 which sometimes leads to gross misinterpretation of the modelling results. I'm guilty of that myself. So in this note I'll try to summarize what one should be aware of when using L2 or any other unimodal regression loss.
 
@@ -10,14 +10,13 @@ Let's first remind ourselves what's the L2 loss. It's the following function:
 
 $$`L_2(y_{true}, y_{pred}) = (y_{true} - y_{pred})^2.`$$
 
-When solving regression problems, the standard approach is to minimize the MC estimate of the expectation of this loss over the data distribution:
+When solving regression problems, the standard approach is to minimize the Monte-Carlo estimate of the expectation of this loss over the data distribution:
 
 $$`\theta^* = \arg \min_{\theta} \frac{1}{|D|} \sum_{(x, y) \in D} \left[f(x; \theta) - y\right]^2.`$$
 
 You can then plug $\theta^{\*}$ into $f$ to predict $y_{pred} = f(x; \theta^\*)$ for any given $x$.
-This gives us a deterministic rule that connects $x$ and $y.$ But in practice it's often impossible to predict $y$ from $x$ precisely.
-It's usually because we don't have access to some important information about $y$ and thus can't put it in $x$, or because the dependency is inherently stochastic[^1].
-And the correct way to describe the dependency between $x$ and $y$ should be to use a posterior distribution $P(y \mid x)$.
+This gives us a deterministic rule that connects $x$ and $y.$ But in practice it's often impossible to predict $y$ from $x$ precisely because we don't have access to some important information about $y$ and thus can't put it in $x$, or because the dependency is inherently stochastic[^1].
+And the correct way to describe the dependency between $x$ and $y$ is to use the posterior distribution $P(y \mid x)$.
 So what is this deterministic $y_{pred}$ that we get by solving the regression problem in the standard way, and how does it relate to $P(y \mid x)$?
 
 Turns out, the answer is quite simple: if you assume infinite training data and model capacity,
@@ -33,7 +32,7 @@ $$`y_{pred} = \mathbb{E}_{y \sim P(y \mid x)}[y]`$$
 This fact becomes important when it's time to make use of $y_{pred}$: interpret its value or plug it into some other function.
 If you're fully aware that $y_{pred}$ is an expectation, you should be fine.
 However, what people often need is not an expectation, but a representative outcome of the process they are trying to model.
-It can even be unconcious: one can assume that good predictions should look similar to the outcomes in the training set,
+It can be very subtle: one can unconciously expect good predictions to look similar to the data points in the training set,
 which are not expectations but samples from the posterior.
 And the problem is that, depending on the nature of your data, the expectation can be arbitrarily dissimilar to any sample. Let's consider a few examples.
 
@@ -44,7 +43,7 @@ In this case the expectation of the posterior is representative of the most like
 
 ![A skewed unimodal posterior](/images/dangers-of-l2-loss/posterior_unimodal_skewed.png)
 
-Another possible case is a unimodal posterior with uneven tails. This can happen, for example, if the value you're trying to model has some natural bound on one side.
+Another possible case is a unimodal posterior with uneven tails. This can happen, for example, if the value you're trying to model is bounded on one side.
 For instance, you might be predicting waiting time, which cannot be negative but can be very large.
 For such problems the expectation of the posterior will correspond to some value that is not entirely unlikely, but can be rather far from the area where most of the outcomes happen.
 
