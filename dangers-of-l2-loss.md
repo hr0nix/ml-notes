@@ -1,5 +1,7 @@
 # The dangers of L2 (or any other unimodal regression) loss
 
+For better understanding of how the probabilistic modelling principles explained in this post map into actual pytorch code, check out this nice [repo](https://github.com/shreyansh26/Probabilistic-Neural-Modeling) made by [@shreyansh_26](https://x.com/shreyansh_26)
+
 ## The problem
 What loss function is your first choice when faced with a regression problem? I guess it's L2. At least that's what we are taught in intro ML courses.
 However, as I've discovered over my ML engineer career, a lot of ML practitioners don't fully appreciate the implicit assumptions they make
