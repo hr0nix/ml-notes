@@ -5,7 +5,14 @@ Rejection Sampling Fine-Tuning (RFT) is an RL technique that gained popularity d
 * Filter out those with low rewards.
 * Fine-tune the model on the rest of the trajectories, reinforcing model's ability to produce high-reward trajectories.
 
-In this note we will show why this technique actually guarantees policy improvement in stochastic multi-step environments with sparse binary rewards.
+In this note we will discuss under which conitions this technique actually guarantees policy improvement, and when it can result in a weaker policy compared to the data collection policy.
+
+## A quick side note
+
+Originally I intended to write this note to prove that RFT is _not_ a policy improvement in multi-step stochastic environments, as my intuition strongly suggested that learning solely from successful trajectories would imply maximising over environment stochasticity, which will result in mistakenly attributing success to actions where it was due to environment. The reality however turned out to be slightly more complex:
+* For a certain reward structure (sparse binary rewards) this method results in a guaranteed policy improvement.
+* However for general reward structures (arbitrary rewards on any step) this method does not yield improvements even for bandits, so multi-stepness does not matter.
+Yet another reminder not to rely on intuition too much.
 
 ## Bandit case
 
@@ -68,4 +75,14 @@ According to the policy improvement theorem, to show that $\pi^*$ is an improvem
 
 $$E_{a \sim \pi^*(a \mid s)}[Q_{\pi}(s, a)] = \sum_i \pi(a=a_i \mid s) Q^2_{\pi}(s, a_i) \geq V_{\pi}(s),$$
 
-which is what we've already established in the bandit case. 
+which is what we've already established in the bandit case.
+
+## General setting
+
+One can consider a more general setting, where rewards can be arbitrary, and we train on trajectories with reward exceeding some threshold $T$. In this setting policy improvement no longer holds, and it's quite easy to build a counterexample even for bandit case.
+
+Let's consider a bandit with two actions, $a_1$ and $a_2$. Let $a_1$ always result in $0.1$ reward, so $Q(a_1)=0.1$. Let $a_2$ yield $-1$ reward in $50%$ of all cases, and $+1$ otherwise. $Q(a_2)=0$.
+
+It's easy to see that if we choose $T > 0.1$, we will learn a deterministic policy that always chooses $a_2$ and yields $0$ reward on average, irregardless of the initial policy. However an initial policy that always chooses $a_1$ will have a higher expected reward of $0.1$.
+
+The reason for failure is that we essentially attribute high reward of $1$ to the choice of action $a_2$, maximising over the stochasticity of the environment instead of averaging over it.
