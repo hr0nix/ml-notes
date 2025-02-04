@@ -1,6 +1,6 @@
 # The Applicability Limits of Rejection Sampling Fine-Tuning
 
-Rejection Sampling Fine-Tuning (RFT) is an RL technique that gained popularity during the LLM revolution. The main reason for its popularity is that it's very simple to apply:
+Rejection Sampling Fine-Tuning (RFT) is an RL technique that gained popularity during the LLM revolution. The main reason for its popularity is that it is very simple to apply:
 * Collect some trajectories from the model.
 * Filter out those with low rewards.
 * Fine-tune the model on the rest of the trajectories, reinforcing model's ability to produce high-reward trajectories.
@@ -39,7 +39,7 @@ the value of the initial policy.
 Is $\pi^*(a)$ necessarily an improvement over $\pi(a)$? Turns out it is, and there is a beautiful way to show it using non-negativity of variance.
 We need to show that
 
-$$ V_{\pi^*} = \frac{1}{V_{\pi}} \sum_i \pi_i q_i^2 \geq V_{\pi}.$$
+$$ V_{\pi^\ast} = \frac{1}{V_{\pi}} \sum_i \pi_i q_i^2 \geq V_{\pi}.$$
 
 Let's define a random variable $X$ that takes the value $q_i$ with probability $\pi_i$. Then
 
@@ -69,11 +69,11 @@ Let us now extend our MDP with finite actions and binary rewards to the multi-st
 
 First, let's figure out what our RFT policy will look like in multi-step case, e.g. how many times each $(s, a)$ pair will occur in the RFT dataset. Whenever we get into state $s$ during data collection, we will act with action $a_i$ with probability $\pi_i$, and then eventually get non-zero reward in $Q_{\pi}(s, a)$ fraction of all cases where $a_i$ was chosen in state $s$. Therefore, just as in the bandit case,
 
-$$\pi^*(a=a_i \mid s) = \frac{1}{V_{\pi}(s)} \pi(a=a_i \mid s) * Q_{\pi}(s, a_i).$$
+$$\pi^*(a=a_i \mid s) = \frac{1}{V_{\pi}(s)} \pi(a=a_i \mid s) Q_{\pi}(s, a_i).$$
 
-According to the policy improvement theorem, to show that $\pi^*$ is an improvement over $\pi$, we need to show that
+According to the policy improvement theorem, to show that $\pi^\ast$ is an improvement over $\pi$, we need to show that
 
-$$E_{a \sim \pi^*(a \mid s)}[Q_{\pi}(s, a)] = \sum_i \pi(a=a_i \mid s) Q^2_{\pi}(s, a_i) \geq V_{\pi}(s),$$
+$$E_{a \sim \pi^\ast(a \mid s)}[Q_{\pi}(s, a)] = \sum_i \pi(a=a_i \mid s) Q^2_{\pi}(s, a_i) \geq V_{\pi}(s),$$
 
 which is what we've already established in the bandit case.
 
@@ -87,6 +87,6 @@ Let's now consider a data collection policy $\pi$ that chooses either $a_1$ or $
 
 $$V_{\pi} = \frac{1}{2} \times 0.1 + \frac{1}{2} \times 0 = 0.05.$$
 
-It's easy to see that if we use $T > 0.1$ in RFT, we will learn a deterministic policy $\pi^\*$ that always chooses $a_2$ (as it's the only action yielding large enough reward) with $V_{\pi^*} = 0$, which is worse. The reason for failure is that we essentially attribute high reward of $1$ to the choice of action $a_2$, maximising over the stochasticity of the environment instead of averaging over it.
+It's easy to see that if we use $T > 0.1$ in RFT, we will learn a deterministic policy $\pi^\ast$ that always chooses $a_2$ (as it's the only action yielding large enough reward) with $V_{\pi^\ast} = 0$, which is worse. The reason for failure is that we essentially attribute high reward of $1$ to the choice of action $a_2$, maximising over the stochasticity of the environment instead of averaging over it.
 
 Therefore, RFT with arbitrary reward structures should be used with great caution, as it can result in a policy that performs worse than the baseline.
