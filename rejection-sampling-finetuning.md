@@ -87,6 +87,6 @@ Let's now consider a data collection policy $\pi$ that chooses either $a_1$ or $
 
 $$V_{\pi} = \frac{1}{2} \times 0.1 + \frac{1}{2} \times 0 = 0.05.$$
 
-It's easy to see that if we use $T > 0.1$ in RFT, we will learn a deterministic policy $\pi^*$ that always chooses $a_2$ (as it's the only action yielding large enough reward) with $V_{\pi^*} = 0$, which is worse. The reason for failure is that we essentially attribute high reward of $1$ to the choice of action $a_2$, maximising over the stochasticity of the environment instead of averaging over it.
+It's easy to see that if we use $T > 0.1$ in RFT, we will learn a deterministic policy $\pi^\*$ that always chooses $a_2$ (as it's the only action yielding large enough reward) with $V_{\pi^*} = 0$, which is worse. The reason for failure is that we essentially attribute high reward of $1$ to the choice of action $a_2$, maximising over the stochasticity of the environment instead of averaging over it.
 
 Therefore, RFT with arbitrary reward structures should be used with great caution, as it can result in a policy that performs worse than the baseline.
