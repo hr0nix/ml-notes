@@ -12,6 +12,7 @@ In this note we will discuss under which conitions this technique actually guara
 Originally I intended to write this note to prove that RFT is _not_ a policy improvement in multi-step stochastic environments, as my intuition strongly suggested that learning solely from successful trajectories would imply maximising over environment stochasticity, which will result in mistakenly attributing success to actions where it was due to environment. The reality however turned out to be slightly more complex:
 * For a certain reward structure (sparse binary rewards) this method results in a guaranteed policy improvement.
 * However for general reward structures (arbitrary rewards on any step) this method does not yield improvements even for bandits, so multi-stepness does not matter.
+
 Yet another reminder not to rely on intuition too much.
 
 ## Bandit case
