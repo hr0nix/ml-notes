@@ -24,8 +24,8 @@ with
 
 $$Q(a_i) = q_i,$$
 
-the probability that $a_i$ will yield a reward of one. Applying RFT to this setup would mean sampling a lot of actions from $$\pi(a)$$ and leaving only those that resulted in a positive reward.
-This process will result in a dataset with the number of occurences of each action proportional to $$\pi_i q_i$$. Assuming infinite training data and model capacity,
+the probability that $a_i$ will yield a reward of one. Applying RFT to this setup would mean sampling a lot of actions from $\pi(a)$ and leaving only those that resulted in a positive reward.
+This process will result in a dataset with the number of occurences of each action proportional to $\pi_i q_i$. Assuming infinite training data and model capacity,
 training on this dataset will yield the policy
 
 $$\pi^*(a=a_i) = \frac{1}{Z} \pi_i q_i,$$
