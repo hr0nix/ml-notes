@@ -80,6 +80,8 @@ which is what we've already established in the bandit case.
 
 ## General setting
 
+### Arbitrary threshold
+
 One can consider a more general, but still sparse, setting, where terminal rewards can be arbitrary, and we train on trajectories with rewards exceeding some threshold $T$. In this setting policy improvement no longer holds, and it's quite easy to build a counterexample even for the bandit case.
 
 Let's consider a bandit with two actions, $a_1$ and $a_2$. Let $a_1$ always result in $0.1$ reward, so $Q(a_1)=0.1$. Let $a_2$ yield $-1$ reward in $\frac{1}{2}$ of all cases, and $+1$ otherwise. Therefore $Q(a_2)=0$.
@@ -91,3 +93,27 @@ $$V_{\pi} = \frac{1}{2} \times 0.1 + \frac{1}{2} \times 0 = 0.05.$$
 It's easy to see that if we use $T > 0.1$ in RFT, we will learn a deterministic policy $\pi^\ast$ that always chooses $a_2$ (as it's the only action yielding large enough reward) with $V_{\pi^\ast} = 0$, which is worse. The reason for failure is that we essentially attribute high reward of $1$ to the choice of action $a_2$, maximising over the stochasticity of the environment instead of averaging over it. One can note that we are relying on non-determinism of the reward function here. However reward non-determinism can be trivially emulated by a two-step MDP with a non-deterministic transition function and deterministic rewards, so the argument still holds.
 
 Therefore, RFT with arbitrary reward structures should be used with great caution, as it can result in a policy that performs worse than the baseline.
+
+### A special case of $T=0$
+
+What about a specific case of non-negative rewards and $T=0$, i.e. training on all trajectories that have yielded a non-zero return? The following bandit counterexample shows that we cannot guarantee improvement even in this restricted case.
+
+First, let's introduce $r(a)$ – a random variable representing the reward achieved after issuing action $a$, i.e. $Q(a_i) = E[r(a_i)]$. When using the threshold $T=0$, our policy $\pi^\ast$ will take the following form:
+
+$$\pi^\ast(a_i) = \frac{1}{Z} \pi(a_i) P(r(a_i) > 0)$$
+
+Consider the following bandit:
+* $Q(a_1) = 1$ with $P(r(a_1) > 0) = 1$, i.e. action $a_1$ yields a guaranteed reward of $1$.
+* $Q(a_2) = 10$ with $P(r(a_2) > 0) = 0.1$, e.g. action $a_2$ yields a reward of $100$ in $\frac{1}{10}$ of all cases and $0$ otherwise.
+Let us compute $V_{\pi}$ and $V_{\pi^\ast}$ for a uniform policy $\pi$ with $\pi(a_1) = \pi(a_2) = 0.5$:
+
+$$V_{\pi} = 0.5 \times 1 + 0.5 \times 10 = 5.5,$$
+
+$$Z = 0.5 \times 1 + 0.5 \times 0.1 = 0.55,$$
+
+$$\pi^\ast(a_1) = \frac{0.5}{0.55}, \quad \pi^\ast(a_2) = \frac{0.05}{0.55},$$
+
+$$V_{\pi^\ast} = \frac{0.5}{0.55} \times 1 + \frac{0.05}{0.55} \times 10 \approx 1.8181.$$
+
+Therefore $\pi^\ast$ is not an improvement. One way to explain why is to notice that $\pi^*$ penalized $a_2$ due to the fact that it yields a non-zero reward rarely, but failed to account for the fact that when it does, the reward is very large.
+
