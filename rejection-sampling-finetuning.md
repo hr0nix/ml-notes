@@ -80,7 +80,7 @@ which is what we've already established in the bandit case.
 
 ## General setting
 
-One can consider a more general setting, where rewards can be arbitrary, and we train on trajectories with rewards exceeding some threshold $T$. In this setting policy improvement no longer holds, and it's quite easy to build a counterexample even for the bandit case.
+One can consider a more general, but still sparse, setting, where terminal rewards can be arbitrary, and we train on trajectories with rewards exceeding some threshold $T$. In this setting policy improvement no longer holds, and it's quite easy to build a counterexample even for the bandit case.
 
 Let's consider a bandit with two actions, $a_1$ and $a_2$. Let $a_1$ always result in $0.1$ reward, so $Q(a_1)=0.1$. Let $a_2$ yield $-1$ reward in $\frac{1}{2}$ of all cases, and $+1$ otherwise. Therefore $Q(a_2)=0$.
 
@@ -88,6 +88,6 @@ Let's now consider a data collection policy $\pi$ that chooses either $a_1$ or $
 
 $$V_{\pi} = \frac{1}{2} \times 0.1 + \frac{1}{2} \times 0 = 0.05.$$
 
-It's easy to see that if we use $T > 0.1$ in RFT, we will learn a deterministic policy $\pi^\ast$ that always chooses $a_2$ (as it's the only action yielding large enough reward) with $V_{\pi^\ast} = 0$, which is worse. The reason for failure is that we essentially attribute high reward of $1$ to the choice of action $a_2$, maximising over the stochasticity of the environment instead of averaging over it.
+It's easy to see that if we use $T > 0.1$ in RFT, we will learn a deterministic policy $\pi^\ast$ that always chooses $a_2$ (as it's the only action yielding large enough reward) with $V_{\pi^\ast} = 0$, which is worse. The reason for failure is that we essentially attribute high reward of $1$ to the choice of action $a_2$, maximising over the stochasticity of the environment instead of averaging over it. One can note that we are relying on non-determinism of the reward function here. However reward non-determinism can be trivially emulated by a two-step MDP with a non-deterministic transition function and deterministic rewards, so the argument still holds.
 
 Therefore, RFT with arbitrary reward structures should be used with great caution, as it can result in a policy that performs worse than the baseline.
