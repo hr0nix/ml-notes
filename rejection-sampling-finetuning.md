@@ -117,3 +117,20 @@ $$V_{\pi^\ast} = \frac{0.5}{0.55} \times 1 + \frac{0.05}{0.55} \times 10 \approx
 
 Therefore $\pi^\ast$ is not an improvement. One way to explain why is to notice that $\pi^*$ penalized $a_2$ due to the fact that it yields a non-zero reward rarely, but failed to account for the fact that when it does, the reward is very large.
 
+### $T=0$, sparse terminal rewards with discounted returns
+
+We have established that RFT is in general not applicable to setups with non-binary terminal rewards. One practically interesting case of such setup is a setup with discounted binary terminal rewards: binary terminal reward is multiplied by $\gamma^t$ with $t$ being the number of steps it took to reach the terminal state, and $\gamma$ being a *discount factor*. Discounted rewards are often used to encourage the agent to reach success faster, loosing less reward along the way. While using $T=0$ cannot guarantee improvement in this setting, perhaps we can say anything about the magnitude of improvement violations depending on the $\gamma$? For example, if $\gamma$ is close to $1$, this setting should be very similar to the undiscounted case where RFT yields a guaranteed improvement.
+
+Turns out, there is an easy way to compute some bounds on the value of $\pi^{\ast}$ if the maximum number of steps can be upper-bounded by some value $T$. First, let's note that
+
+$$E[\gamma^T P(r_{\pi}(s, a) > 0)] \leq Q_{\pi}(s, a, \gamma) \leq E[P(r_{\pi}(s, a) > 0)]$$
+
+for any policy $\pi$. Here, $r_{\pi}(s, a)$ is a random variable corresponding to the reward achieved after acting with action $a$ in state $s$, and $Q_{\pi}(s, a, \gamma)$ is the $\gamma$-discounted action-value function. Also note that
+
+$$E[P(r_{\pi}(s, a) > 0)] = Q_{\pi}(s, a, 1).$$
+
+Since this holds for any policy, we have
+
+$$V_{\pi^{\ast}} = E_{s, a \sim \pi^{\ast}}[Q_{\pi^{\ast}}(s, a, \gamma)] \geq \gamma^T E_{s, a \sim \pi^{\ast}}[Q_{\pi^{\ast}}(s, a, 1)] \geq \gamma^T E_{s, a \sim \pi}[Q_{\pi}(s, a, 1)] \geq \gamma^T E_{s, a \sim \pi}[Q_{\pi}(s, a, \gamma)] = \gamma^T V_{\pi},$$
+
+where the inequality connecting $\pi^{\ast}$ to $\pi$ comes from policy improvement guarantees for the undiscounted case. Therefore, RFT-based improvement can be violated by the factor of at most $\gamma^T$.
