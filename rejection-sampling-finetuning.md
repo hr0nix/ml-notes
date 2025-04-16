@@ -74,7 +74,7 @@ $$\pi^*(a=a_i \mid s) = \frac{1}{V_{\pi}(s)} \pi(a=a_i \mid s) Q_{\pi}(s, a_i).$
 
 According to the policy improvement theorem, to show that $\pi^\ast$ is an improvement over $\pi$, we need to show that
 
-$$E_{a \sim \pi^\ast(a \mid s)}[Q_{\pi}(s, a)] = \sum_i \pi(a=a_i \mid s) Q^2_{\pi}(s, a_i) \geq V_{\pi}(s),$$
+$$E_{a \sim \pi^\ast(a \mid s)}[Q_{\pi}(s, a)] = \sum_i \frac{1}{V_{\pi}(s)} \pi(a=a_i \mid s) Q^2_{\pi}(s, a_i) \geq V_{\pi}(s),$$
 
 which is what we've already established in the bandit case.
 
